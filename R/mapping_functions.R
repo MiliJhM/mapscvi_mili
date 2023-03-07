@@ -44,7 +44,7 @@ predict_query = function(query_seurat_object,model_path,query_reduction="scvi",v
     var_df = data.frame(var_names = rownames(SeuratObject::GetAssayData(query_seurat_object,slot='counts',assay=assay)))
     rownames(var_df) = var_df$var_names
     # make a matrix with included variable genes in query
-    included_var_features = intersect(var_features,var_df$var_names)
+    included_var_features = intersect(GetAssay(query_seurat_object)@var.features, var_df$var_names)
     # if I don't subset here, then a bigger anndata will be exported but the library size prior will be estimated correctly (update: no because the original model only used the x var genes to estimate lib size)
     matrix_for_anndata = as.matrix(SeuratObject::GetAssayData(query_seurat_object,slot='counts',assay=assay)[included_var_features,])
     # make new var_df
@@ -52,6 +52,8 @@ predict_query = function(query_seurat_object,model_path,query_reduction="scvi",v
     rownames(var_df) = var_df$var_names
     message("Matrix for anndata dim ",dim(matrix_for_anndata)[1]," ",dim(matrix_for_anndata)[2])
   }else{
+    var_df =  data.frame(var_names = GetAssay(query_seurat_object)@var.features)
+    rownames(var_df) = var_df$var_names
     matrix_for_anndata = as.matrix(SeuratObject::GetAssayData(query_seurat_object,slot='counts',assay=assay))
     message("Matrix for anndata dim ",dim(matrix_for_anndata)[1]," ",dim(matrix_for_anndata)[2])
   }
@@ -77,7 +79,8 @@ predict_query = function(query_seurat_object,model_path,query_reduction="scvi",v
     # make anndata in python
     adata_query <- sc$AnnData(
       X   = t(matrix_for_anndata), #scVI requires raw counts, scanpy transposed data
-      obs = query_seurat_object@meta.data
+      obs = query_seurat_object@meta.data,
+      var = var_df
     )
     # put raw data in X slot ??
 
