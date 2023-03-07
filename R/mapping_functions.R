@@ -77,8 +77,7 @@ predict_query = function(query_seurat_object,model_path,query_reduction="scvi",v
     # make anndata in python
     adata_query <- sc$AnnData(
       X   = t(matrix_for_anndata), #scVI requires raw counts, scanpy transposed data
-      obs = query_seurat_object@meta.data,
-      var = var_df
+      obs = query_seurat_object@meta.data
     )
     # put raw data in X slot ??
 
