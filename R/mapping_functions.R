@@ -52,7 +52,7 @@ predict_query = function(query_seurat_object,model_path,query_reduction="scvi",v
     rownames(var_df) = var_df$var_names
     message("Matrix for anndata dim ",dim(matrix_for_anndata)[1]," ",dim(matrix_for_anndata)[2])
   }else{
-    var_df =  data.frame(var_names = GetAssay(query_seurat_object)@var.features)
+    var_df =  data.frame(var_names = rownames(query_seurat_object))
     rownames(var_df) = var_df$var_names
     matrix_for_anndata = as.matrix(SeuratObject::GetAssayData(query_seurat_object,slot='counts',assay=assay))
     message("Matrix for anndata dim ",dim(matrix_for_anndata)[1]," ",dim(matrix_for_anndata)[2])
